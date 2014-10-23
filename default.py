@@ -20,7 +20,7 @@ sys.path.append(__resource__)
 
 from utils import *
 
-socket.setdefaulttimeout(10)
+#socket.setdefaulttimeout(10)
 
 APPID          = '85c6f759f3424557a309da1f875b23d6'
 BASE_URL       = 'http://api.openweathermap.org/data/2.5/%s'
@@ -39,11 +39,13 @@ TEMPUNIT       = unicode(xbmc.getRegion('tempunit'),encoding='utf-8')
 MAXDAYS        = 6
 
 def log(txt):
-    if DEBUG == 'true':
+#    if DEBUG == 'true':
+    if True:
         if isinstance (txt,str):
             txt = txt.decode("utf-8")
         message = u'%s: %s' % (__addonid__, txt)
-        xbmc.log(msg=message.encode("utf-8"), level=xbmc.LOGDEBUG)
+#        xbmc.log(msg=message.encode("utf-8"), level=xbmc.LOGDEBUG)
+        xbmc.log(msg=message.encode("utf-8"), level=xbmc.LOGINFO) # enable normal logging for testing purposes
 
 def clear():
     set_property('Current.Condition'     , 'N/A')
@@ -286,10 +288,10 @@ def forecast(loc,locid,locationdeg):
     log('daily data: %s' % daily_data)
     try:
         daily_weather = json.loads(daily_data)
-        daynum = ''
     except:
         log('parsing daily data failed')
         daily_weather = ''
+    daynum = ''
     if daily_weather != '' and daily_weather.has_key('cod') and not daily_weather['cod'] == '404':
         daynum = daily_props(daily_weather)
     hourly_data = get_data(hourly_string)
