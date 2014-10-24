@@ -186,12 +186,12 @@ def forecast(loc,locid,locationdeg):
     md5 = hashlib.md5()
     md5.update(str(locationdeg) + str(ZOOM))
     tag = md5.hexdigest()
-    streetmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s' % (__addonid__, tag))
-    precipmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/precipmap' % __addonid__)
-    cloudsmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/cloudsmap' % __addonid__)
-    tempmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/tempmap' % __addonid__)
-    windmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/windmap' % __addonid__)
-    pressuremapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/pressuremap' % __addonid__)
+    streetmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s/' % (__addonid__, tag))
+    precipmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/precipmap/' % __addonid__)
+    cloudsmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/cloudsmap/' % __addonid__)
+    tempmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/tempmap/' % __addonid__)
+    windmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/windmap/' % __addonid__)
+    pressuremapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/pressuremap/' % __addonid__)
     lat = float(eval(locationdeg)[0])
     lon = float(eval(locationdeg)[1])
     x, y = GET_TILE(lat, lon, ZOOM)
@@ -206,10 +206,12 @@ def forecast(loc,locid,locationdeg):
         imgs = [[x-1,tile_max], [x,tile_max], [x+1,tile_max], [x-1,y], [x,y], [x+1,y], [x-1,y+1], [x,y+1], [x+1,y+1]]
     elif y == tile_max:
         imgs = [[x-1,y-1], [x,y-1], [x+1,y-1], [x-1,y], [x,y], [x+1, y], [x-1,0], [x,0], [x+1,0]]
+    streetthread_created = False
     if not xbmcvfs.exists(streetmapdir):
         xbmcvfs.mkdirs(streetmapdir)
         thread_street = get_tiles(streetmapdir, 'streetmap.png', imgs, street_url) # only have to download the streetmap once, unless location or zoom has changed
         thread_street.start()
+        streetthread_created = True
     if not xbmcvfs.exists(precipmapdir):
         xbmcvfs.mkdirs(precipmapdir)
     thread_precip = get_tiles(precipmapdir, 'precipmap.png', imgs, precip_url)
@@ -303,7 +305,8 @@ def forecast(loc,locid,locationdeg):
         hourly_weather = ''
     if hourly_weather != '' and hourly_weather.has_key('cod') and not hourly_weather['cod'] == '404':
         hourly_props(hourly_weather, daynum)
-    thread_street.join()
+    if streetthread_created:
+        thread_street.join()
     thread_precip.join()
     thread_clouds.join()
     thread_temp.join()

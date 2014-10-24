@@ -1,2 +1,5 @@
+v0.0.2
+- fix crash due to undefined variable 
+
 v0.0.1
 - initial beta
