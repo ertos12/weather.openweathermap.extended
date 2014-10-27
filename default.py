@@ -793,6 +793,8 @@ def hourly_props(data, daynum):
         day_num = get_month(item['dt'], 'ds').split(' ')[0]
         if day_num == daynum:
             day_time = get_time(item['dt'])[0:2].lstrip('0').rstrip(':')
+            if day_time == '':
+                day_time = 0
             if int(day_time) > 2:
                 code = str(item['weather'][0]['id'])
                 icon = item['weather'][0]['icon']
