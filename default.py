@@ -145,7 +145,7 @@ def location(string):
     log('location: %s' % string)
     loc = unicodedata.normalize('NFKD', unicode(string, 'utf-8')).encode('ascii','ignore')
     log('searching for location: %s' % loc)
-    search_string = 'find?q=%s&type=accurate&APPID=%s' % (urllib2.quote(loc), APPID)
+    search_string = 'find?q=%s&type=like&APPID=%s' % (urllib2.quote(loc), APPID)
     query = get_data(search_string)
     log('location data: %s' % query)
     try:
