@@ -1,3 +1,6 @@
+v0.0.5
+- deprecate xbmc.abortRequested
+
 v0.0.4
 - use substring location search
 

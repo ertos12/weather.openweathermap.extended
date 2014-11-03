@@ -253,7 +253,7 @@ def forecast(loc,locid,locationdeg):
     daily_string = 'forecast/daily?%s&lang=%s&APPID=%s&units=metric&cnt=16' % (query, lang, APPID)
     retry = 0
     failed = False
-    while (retry < 6) and (not xbmc.abortRequested):
+    while (retry < 6) and (not MONITOR.abortRequested()):
         current_data = get_data(current_string)
         log('current data: %s' % current_data)
         if current_data != '':
@@ -920,6 +920,13 @@ class get_tiles(threading.Thread):
             imy += 256
         out.save(os.path.join(self.mapdir,self.mapfile))
 
+class MyMonitor(xbmc.Monitor):
+    def __init__(self, *args, **kwargs):
+        xbmc.Monitor.__init__(self)
+
+log('version %s started: %s' % (__version__, sys.argv[1]))
+
+MONITOR = MyMonitor()
 set_property('Forecast.IsFetched' , 'true')
 set_property('Current.IsFetched'  , 'true')
 set_property('Today.IsFetched'    , 'true')
@@ -931,8 +938,6 @@ set_property('Alerts.IsFetched'   , '')
 set_property('Map.IsFetched'      , 'true')
 set_property('WeatherProvider'    , __addonname__)
 set_property('WeatherProviderLogo', xbmc.translatePath(os.path.join(__cwd__, 'resources', 'graphics', 'banner.png')))
-
-log('version %s started: %s' % (__version__, sys.argv[1]))
 
 if sys.argv[1].startswith('Location'):
     keyboard = xbmc.Keyboard('', xbmc.getLocalizedString(14024), False)
