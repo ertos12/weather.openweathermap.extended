@@ -400,29 +400,29 @@ def current_props(data,loc):
     if 'F' in TEMPUNIT:
         set_property('Current.LowTemperature'       , str(int(round(data['main']['temp_min'] * 1.8 + 32))) + TEMPUNIT)
         set_property('Current.HighTemperature'      , str(int(round(data['main']['temp_max'] * 1.8 + 32))) + TEMPUNIT)
-        set_property('Current.Pressure'             , str(round(data['main']['pressure'] / 33.86 ,2)) + 'in')
+        set_property('Current.Pressure'             , str(round(data['main']['pressure'] / 33.86 ,2)) + ' in')
         if data['main'].has_key('sea_level'):
-            set_property('Current.SeaLevel'         , str(round(data['main']['sea_level'] / 33.86 ,2)) + 'in')
+            set_property('Current.SeaLevel'         , str(round(data['main']['sea_level'] / 33.86 ,2)) + ' in')
         if data['main'].has_key('grnd_level'):
-            set_property('Current.GroundLevel'      , str(round(data['main']['grnd_level'] / 33.86 ,2)) + 'in')
+            set_property('Current.GroundLevel'      , str(round(data['main']['grnd_level'] / 33.86 ,2)) + ' in')
         rain = 0
         snow = 0
         if data.has_key('rain'):
             rain = data['rain']['3h']
-            set_property('Current.Rain'             , str(round(rain *  0.04 ,2)) + 'in')
+            set_property('Current.Rain'             , str(round(rain *  0.04 ,2)) + ' in')
         if data.has_key('snow'):
             snow = data['snow']['3h']
-            set_property('Current.Snow'             , str(round(snow *  0.04 ,2)) + 'in')
+            set_property('Current.Snow'             , str(round(snow *  0.04 ,2)) + ' in')
         precip = rain + snow
-        set_property('Current.Precipitation'        , str(round(precip *  0.04 ,2)) + 'in')
+        set_property('Current.Precipitation'        , str(round(precip *  0.04 ,2)) + ' in')
     else:
         set_property('Current.LowTemperature'       , str(int(round(data['main']['temp_min']))) + TEMPUNIT)
         set_property('Current.HighTemperature'      , str(int(round(data['main']['temp_max']))) + TEMPUNIT)
-        set_property('Current.Pressure'             , str(data['main']['pressure']) + 'mb')
+        set_property('Current.Pressure'             , str(data['main']['pressure']) + ' mb')
         if data['main'].has_key('sea_level'):
-            set_property('Current.SeaLevel'         , str(data['main']['sea_level']) + 'mb')
+            set_property('Current.SeaLevel'         , str(data['main']['sea_level']) + ' mb')
         if data['main'].has_key('grnd_level'):
-            set_property('Current.GroundLevel'      , str(data['main']['grnd_level']) + 'mb')
+            set_property('Current.GroundLevel'      , str(data['main']['grnd_level']) + ' mb')
         rain = 0
         snow = 0
         if data.has_key('rain'):
@@ -430,15 +430,15 @@ def current_props(data,loc):
                 rain = data['rain']['1h']
             elif data['rain'].has_key('3h'):
                 rain = data['rain']['3h']
-            set_property('Current.Rain'             , str(int(round(rain))) + 'mm')
+            set_property('Current.Rain'             , str(int(round(rain))) + ' mm')
         if data.has_key('snow'):
             if data['snow'].has_key('1h'):
                 snow = data['snow']['1h']
             elif data['snow'].has_key('3h'):
                 snow = data['snow']['3h']
-            set_property('Current.Snow'             , str(int(round(snow))) + 'mm')
+            set_property('Current.Snow'             , str(int(round(snow))) + ' mm')
         precip = rain + snow
-        set_property('Current.Precipitation'        , str(int(round(precip))) + 'mm')
+        set_property('Current.Precipitation'        , str(int(round(precip))) + ' mm')
     if SPEEDUNIT == 'mph':
         if data['wind'].has_key('gust'):
             set_property('Current.WindGust'         , str(int(round(data['wind']['gust'] * 2.237))) + SPEEDUNIT)
@@ -504,18 +504,18 @@ def daily_props(data):
             set_property('Daily.%i.HighTemperature' % (count+1), str(int(round(item['temp']['max'] * 1.8 + 32))) + TEMPUNIT)
             set_property('Daily.%i.LowTemperature'  % (count+1), str(int(round(item['temp']['min'] * 1.8 + 32))) + TEMPUNIT)
             set_property('Daily.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['temp']['day'])), int(round(item['speed'])), 'F') + TEMPUNIT)
-            set_property('Daily.%i.Pressure'        % (count+1), str(round(item['pressure'] / 33.86 ,2)) + 'in')
+            set_property('Daily.%i.Pressure'        % (count+1), str(round(item['pressure'] / 33.86 ,2)) + ' in')
             set_property('Daily.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['temp']['day'])), item['humidity'], 'F') + TEMPUNIT)
             rain = 0
             snow = 0
             if item.has_key('rain'):
                 rain = item['rain']
-                set_property('Daily.%i.Rain'        % (count+1), str(round(rain * 0.04 ,2)) + 'in')
+                set_property('Daily.%i.Rain'        % (count+1), str(round(rain * 0.04 ,2)) + ' in')
             if item.has_key('snow'):
                 snow = item['snow']
-                set_property('Daily.%i.Snow'        % (count+1), str(round(snow * 0.04 ,2)) + 'in')
+                set_property('Daily.%i.Snow'        % (count+1), str(round(snow * 0.04 ,2)) + ' in')
             precip = rain + snow
-            set_property('Daily.%i.Precipitation'   % (count+1), str(round(precip * 0.04 ,2)) + 'in')
+            set_property('Daily.%i.Precipitation'   % (count+1), str(round(precip * 0.04 ,2)) + ' in')
         else:
             set_property('Daily.%i.TempMorn'        % (count+1), str(int(round(item['temp']['morn']))) + TEMPUNIT)
             set_property('Daily.%i.TempDay'         % (count+1), str(int(round(item['temp']['day']))) + TEMPUNIT)
@@ -524,18 +524,18 @@ def daily_props(data):
             set_property('Daily.%i.HighTemperature' % (count+1), str(int(round(item['temp']['max']))) + TEMPUNIT)
             set_property('Daily.%i.LowTemperature'  % (count+1), str(int(round(item['temp']['min']))) + TEMPUNIT)
             set_property('Daily.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['temp']['day'])), int(round(item['speed'])), 'C') + TEMPUNIT)
-            set_property('Daily.%i.Pressure'        % (count+1), str(item['pressure']) + 'mb')
+            set_property('Daily.%i.Pressure'        % (count+1), str(item['pressure']) + ' mb')
             set_property('Daily.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['temp']['day']) ), item['humidity'], 'C') + TEMPUNIT)
             rain = 0
             snow = 0
             if item.has_key('rain'):
                 rain = item['rain']
-                set_property('Daily.%i.Rain'        % (count+1), str(int(round(rain))) + 'mm')
+                set_property('Daily.%i.Rain'        % (count+1), str(int(round(rain))) + ' mm')
             if item.has_key('snow'):
                 snow = item['snow']
-                set_property('Daily.%i.Snow'        % (count+1), str(int(round(snow))) + 'mm')
+                set_property('Daily.%i.Snow'        % (count+1), str(int(round(snow))) + ' mm')
             precip = rain + snow
-            set_property('Daily.%i.Precipitation'   % (count+1), str(int(round(precip))) + 'mm')
+            set_property('Daily.%i.Precipitation'   % (count+1), str(int(round(precip))) + ' mm')
         if SPEEDUNIT == 'mph':
             set_property('Daily.%i.WindSpeed'       % (count+1), str(int(round(item['speed'] * 2.237))) + SPEEDUNIT)
             if item.has_key('gust'): 
@@ -588,17 +588,17 @@ def daily_props(data):
                 set_property('Weekend.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['temp']['day'])), int(round(item['speed'])), 'F') + TEMPUNIT)
                 set_property('Weekend.%i.HighTemperature' % (count+1), str(int(round(item['temp']['max'] * 1.8 + 32))) + TEMPUNIT)
                 set_property('Weekend.%i.LowTemperature'  % (count+1), str(int(round(item['temp']['min'] * 1.8 + 32))) + TEMPUNIT)
-                set_property('Weekend.%i.Pressure'        % (count+1), str(round(item['pressure'] / 33.86 ,2)) + 'in')
+                set_property('Weekend.%i.Pressure'        % (count+1), str(round(item['pressure'] / 33.86 ,2)) + ' in')
                 rain = 0
                 snow = 0
                 if item.has_key('rain'):
                     rain = item['rain']
-                    set_property('Weekend.%i.Rain'        % (count+1), str(round(rain * 0.04 ,2)) + 'in')
+                    set_property('Weekend.%i.Rain'        % (count+1), str(round(rain * 0.04 ,2)) + ' in')
                 if item.has_key('snow'):
                     snow = item['snow']
-                    set_property('Weekend.%i.Snow'        % (count+1), str(round(snow * 0.04 ,2)) + 'in')
+                    set_property('Weekend.%i.Snow'        % (count+1), str(round(snow * 0.04 ,2)) + ' in')
                 precip = rain + snow
-                set_property('Weekend.%i.Precipitation'   % (count+1), str(round(precip * 0.04 ,2)) + 'in')
+                set_property('Weekend.%i.Precipitation'   % (count+1), str(round(precip * 0.04 ,2)) + ' in')
             else:
                 set_property('Weekend.%i.TempMorn'        % (count+1), str(int(round(item['temp']['morn']))) + TEMPUNIT)
                 set_property('Weekend.%i.TempDay'         % (count+1), str(int(round(item['temp']['day']))) + TEMPUNIT)
@@ -608,17 +608,17 @@ def daily_props(data):
                 set_property('Weekend.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['temp']['day'])), int(round(item['speed'])), 'C') + TEMPUNIT)
                 set_property('Weekend.%i.HighTemperature' % (count+1), str(int(round(item['temp']['max']))) + TEMPUNIT)
                 set_property('Weekend.%i.LowTemperature'  % (count+1), str(int(round(item['temp']['min']))) + TEMPUNIT)
-                set_property('Weekend.%i.Pressure'        % (count+1), str(item['pressure']) + 'mb')
+                set_property('Weekend.%i.Pressure'        % (count+1), str(item['pressure']) + ' mb')
                 rain = 0
                 snow = 0
                 if item.has_key('rain'):
                     rain = item['rain']
-                    set_property('Weekend.%i.Rain'        % (count+1), str(int(round(rain))) + 'mm')
+                    set_property('Weekend.%i.Rain'        % (count+1), str(int(round(rain))) + ' mm')
                 if item.has_key('snow'):
                     snow = item['snow']
-                    set_property('Weekend.%i.Snow'        % (count+1), str(int(round(snow))) + 'mm')
+                    set_property('Weekend.%i.Snow'        % (count+1), str(int(round(snow))) + ' mm')
                 precip = rain + snow
-                set_property('Weekend.%i.Precipitation'   % (count+1), str(int(round(precip))) + 'mm')
+                set_property('Weekend.%i.Precipitation'   % (count+1), str(int(round(precip))) + ' mm')
             if SPEEDUNIT == 'mph':
                 set_property('Weekend.%i.WindSpeed'       % (count+1), str(int(round(item['speed'] * 2.237))) + SPEEDUNIT)
                 if item.has_key('gust'): 
@@ -663,35 +663,35 @@ def daily_props(data):
             set_property('36Hour.%i.HighTemperature' % (count+1), str(int(round(item['temp']['max'] * 1.8 + 32))) + TEMPUNIT)
             set_property('36Hour.%i.LowTemperature'  % (count+1), str(int(round(item['temp']['min'] * 1.8 + 32))) + TEMPUNIT)
             set_property('36Hour.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['temp']['day'])), int(round(item['speed'])), 'F') + TEMPUNIT)
-            set_property('36Hour.%i.Pressure'        % (count+1), str(round(item['pressure'] / 33.86 ,2)) + 'in')
+            set_property('36Hour.%i.Pressure'        % (count+1), str(round(item['pressure'] / 33.86 ,2)) + ' in')
             set_property('36Hour.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['temp']['day'])), item['humidity'], 'F') + TEMPUNIT)
             rain = 0
             snow = 0
             if item.has_key('rain'):
                 rain = item['rain']
-                set_property('36Hour.%i.Rain'        % (count+1), str(round(rain * 0.04 ,2)) + 'in')
+                set_property('36Hour.%i.Rain'        % (count+1), str(round(rain * 0.04 ,2)) + ' in')
             if item.has_key('snow'):
                 snow = item['snow']
-                set_property('36Hour.%i.Snow'        % (count+1), str(round(snow * 0.04 ,2)) + 'in')
+                set_property('36Hour.%i.Snow'        % (count+1), str(round(snow * 0.04 ,2)) + ' in')
             precip = rain + snow
-            set_property('36Hour.%i.Precipitation'   % (count+1), str(round(precip * 0.04 ,2)) + 'in')
+            set_property('36Hour.%i.Precipitation'   % (count+1), str(round(precip * 0.04 ,2)) + ' in')
         else:
             set_property('36Hour.%i.Temperature'     % (count+1), str(int(round(item['temp']['day']))) + TEMPUNIT)
             set_property('36Hour.%i.HighTemperature' % (count+1), str(int(round(item['temp']['max']))) + TEMPUNIT)
             set_property('36Hour.%i.LowTemperature'  % (count+1), str(int(round(item['temp']['min']))) + TEMPUNIT)
             set_property('36Hour.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['temp']['day'])), int(round(item['speed'])), 'C') + TEMPUNIT)
-            set_property('36Hour.%i.Pressure'        % (count+1), str(item['pressure']) + 'mb')
+            set_property('36Hour.%i.Pressure'        % (count+1), str(item['pressure']) + ' mb')
             set_property('36Hour.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['temp']['day']) ), item['humidity'], 'C') + TEMPUNIT)
             rain = 0
             snow = 0
             if item.has_key('rain'):
                 rain = item['rain']
-                set_property('36Hour.%i.Rain'        % (count+1), str(int(round(rain))) + 'mm')
+                set_property('36Hour.%i.Rain'        % (count+1), str(int(round(rain))) + ' mm')
             if item.has_key('snow'):
                 snow = item['snow']
-                set_property('36Hour.%i.Snow'        % (count+1), str(int(round(snow))) + 'mm')
+                set_property('36Hour.%i.Snow'        % (count+1), str(int(round(snow))) + ' mm')
             precip = rain + snow
-            set_property('36Hour.%i.Precipitation'   % (count+1), str(int(round(precip))) + 'mm')
+            set_property('36Hour.%i.Precipitation'   % (count+1), str(int(round(precip))) + ' mm')
         if SPEEDUNIT == 'mph':
             set_property('36Hour.%i.WindSpeed'       % (count+1), str(int(round(item['speed'] * 2.237))) + SPEEDUNIT)
             if item.has_key('gust'): 
@@ -744,42 +744,42 @@ def hourly_props(data, daynum):
             set_property('Hourly.%i.LowTemperature'  % (count+1), str(int(round(item['main']['temp_min'] * 1.8 + 32))) + TEMPUNIT)
             set_property('Hourly.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['main']['temp'])), item['main']['humidity'], 'F') + TEMPUNIT)
             set_property('Hourly.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['main']['temp'])), int(round(item['wind']['speed'])), 'F') + TEMPUNIT)
-            set_property('Hourly.%i.Pressure'        % (count+1), str(round(item['main']['pressure'] / 33.86 ,2)) + 'in')
+            set_property('Hourly.%i.Pressure'        % (count+1), str(round(item['main']['pressure'] / 33.86 ,2)) + ' in')
             if item['main'].has_key('sea_level'):
-                set_property('Hourly.%i.SeaLevel'    % (count+1), str(round(item['main']['sea_level'] / 33.86 ,2)) + 'in')
+                set_property('Hourly.%i.SeaLevel'    % (count+1), str(round(item['main']['sea_level'] / 33.86 ,2)) + ' in')
             if item['main'].has_key('grnd_level'):
-                set_property('Hourly.%i.GroundLevel' % (count+1), str(round(item['main']['grnd_level'] / 33.86 ,2)) + 'in')
+                set_property('Hourly.%i.GroundLevel' % (count+1), str(round(item['main']['grnd_level'] / 33.86 ,2)) + ' in')
             rain = 0
             snow = 0
             if item.has_key('rain'):
                 rain = item['rain']['3h']
-                set_property('Hourly.%i.Rain'        % (count+1), str(round(rain *  0.04 ,2)) + 'in')
+                set_property('Hourly.%i.Rain'        % (count+1), str(round(rain *  0.04 ,2)) + ' in')
             if item.has_key('snow'):
                 snow = item['snow']['3h']
-                set_property('Hourly.%i.Snow'        % (count+1), str(round(snow *  0.04 ,2)) + 'in')
+                set_property('Hourly.%i.Snow'        % (count+1), str(round(snow *  0.04 ,2)) + ' in')
             precip = rain + snow
-            set_property('Hourly.%i.Precipitation'   % (count+1), str(round(precip *  0.04 ,2)) + 'in')
+            set_property('Hourly.%i.Precipitation'   % (count+1), str(round(precip *  0.04 ,2)) + ' in')
         else:
             set_property('Hourly.%i.Temperature'     % (count+1), str(int(round(item['main']['temp']))) + TEMPUNIT)
             set_property('Hourly.%i.HighTemperature' % (count+1), str(int(round(item['main']['temp_max']))) + TEMPUNIT)
             set_property('Hourly.%i.LowTemperature'  % (count+1), str(int(round(item['main']['temp_min']))) + TEMPUNIT)
             set_property('Hourly.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['main']['temp'])), item['main']['humidity'], 'C') + TEMPUNIT)
             set_property('Hourly.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['main']['temp'])), int(round(item['wind']['speed'])), 'C') + TEMPUNIT)
-            set_property('Hourly.%i.Pressure'        % (count+1), str(item['main']['pressure']) + 'mb')
+            set_property('Hourly.%i.Pressure'        % (count+1), str(item['main']['pressure']) + ' mb')
             if item['main'].has_key('sea_level'):
-                set_property('Hourly.%i.SeaLevel'    % (count+1), str(item['main']['sea_level']) + 'mb')
+                set_property('Hourly.%i.SeaLevel'    % (count+1), str(item['main']['sea_level']) + ' mb')
             if item['main'].has_key('grnd_level'):
-                set_property('Hourly.%i.GroundLevel' % (count+1), str(item['main']['grnd_level']) + 'mb')
+                set_property('Hourly.%i.GroundLevel' % (count+1), str(item['main']['grnd_level']) + ' mb')
             rain = 0
             snow = 0
             if item.has_key('rain'):
                 rain = item['rain']['3h']
-                set_property('Hourly.%i.Rain'        % (count+1), str(int(round(rain))) + 'mm')
+                set_property('Hourly.%i.Rain'        % (count+1), str(int(round(rain))) + ' mm')
             if item.has_key('snow'):
                 snow = item['snow']['3h']
-                set_property('Hourly.%i.Snow'        % (count+1), str(int(round(snow))) + 'mm')
+                set_property('Hourly.%i.Snow'        % (count+1), str(int(round(snow))) + ' mm')
             precip = rain + snow
-            set_property('Hourly.%i.Precipitation'   % (count+1), str(int(round(precip))) + 'mm')
+            set_property('Hourly.%i.Precipitation'   % (count+1), str(int(round(precip))) + ' mm')
         if SPEEDUNIT == 'mph':
             set_property('Hourly.%i.WindSpeed'       % (count+1), str(int(round(item['wind']['speed'] * 2.237))) + SPEEDUNIT)
             if item.has_key('gust'):
@@ -828,34 +828,34 @@ def hourly_props(data, daynum):
                     set_property('36Hour.%i.LowTemperature'  % (count+1), str(int(round(item['main']['temp_min'] * 1.8 + 32))) + TEMPUNIT)
                     set_property('36Hour.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['main']['temp'])), item['main']['humidity'], 'F') + TEMPUNIT)
                     set_property('36Hour.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['main']['temp'])), int(round(item['wind']['speed'])), 'F') + TEMPUNIT)
-                    set_property('36Hour.%i.Pressure'        % (count+1), str(round(item['main']['pressure'] / 33.86 ,2)) + 'in')
+                    set_property('36Hour.%i.Pressure'        % (count+1), str(round(item['main']['pressure'] / 33.86 ,2)) + ' in')
                     rain = 0
                     snow = 0
                     if item.has_key('rain'):
                         rain = item['rain']['3h']
-                        set_property('36Hour.%i.Rain'        % (count+1), str(round(rain *  0.04 ,2)) + 'in')
+                        set_property('36Hour.%i.Rain'        % (count+1), str(round(rain *  0.04 ,2)) + ' in')
                     if item.has_key('snow'):
                         snow = item['snow']['3h']
-                        set_property('36Hour.%i.Snow'        % (count+1), str(round(snow *  0.04 ,2)) + 'in')
+                        set_property('36Hour.%i.Snow'        % (count+1), str(round(snow *  0.04 ,2)) + ' in')
                     precip = rain + snow
-                    set_property('36Hour.%i.Precipitation'   % (count+1), str(round(precip *  0.04 ,2)) + 'in')
+                    set_property('36Hour.%i.Precipitation'   % (count+1), str(round(precip *  0.04 ,2)) + ' in')
                 else:
                     set_property('36Hour.%i.Temperature'     % (count+1), str(int(round(item['main']['temp']))) + TEMPUNIT)
                     set_property('36Hour.%i.HighTemperature' % (count+1), str(int(round(item['main']['temp_max']))) + TEMPUNIT)
                     set_property('36Hour.%i.LowTemperature'  % (count+1), str(int(round(item['main']['temp_min']))) + TEMPUNIT)
                     set_property('36Hour.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['main']['temp'])), item['main']['humidity'], 'C') + TEMPUNIT)
                     set_property('36Hour.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['main']['temp'])), int(round(item['wind']['speed'])), 'C') + TEMPUNIT)
-                    set_property('36Hour.%i.Pressure'        % (count+1), str(item['main']['pressure']) + 'mb')
+                    set_property('36Hour.%i.Pressure'        % (count+1), str(item['main']['pressure']) + ' mb')
                     rain = 0
                     snow = 0
                     if item.has_key('rain'):
                         rain = item['rain']['3h']
-                        set_property('36Hour.%i.Rain'        % (count+1), str(int(round(rain))) + 'mm')
+                        set_property('36Hour.%i.Rain'        % (count+1), str(int(round(rain))) + ' mm')
                     if item.has_key('snow'):
                         snow = item['snow']['3h']
-                        set_property('36Hour.%i.Snow'        % (count+1), str(int(round(snow))) + 'mm')
+                        set_property('36Hour.%i.Snow'        % (count+1), str(int(round(snow))) + ' mm')
                     precip = rain + snow
-                    set_property('36Hour.%i.Precipitation'   % (count+1), str(int(round(precip))) + 'mm')
+                    set_property('36Hour.%i.Precipitation'   % (count+1), str(int(round(precip))) + ' mm')
                 if SPEEDUNIT == 'mph':
                     set_property('36Hour.%i.WindSpeed'       % (count+1), str(int(round(item['wind']['speed'] * 2.237))) + SPEEDUNIT)
                     if item.has_key('gust'):
