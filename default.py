@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import os, sys, time, socket, urllib2, unicodedata, hashlib, threading
+import os, sys, time, socket, urllib2, unicodedata, hashlib, threading, shutil
 import xbmc, xbmcgui, xbmcaddon, xbmcvfs
 if sys.version_info < (2, 7):
     import simplejson as json
@@ -20,8 +20,6 @@ sys.path.append(__resource__)
 
 from utils import *
 
-#socket.setdefaulttimeout(10)
-
 APPID          = '85c6f759f3424557a309da1f875b23d6'
 BASE_URL       = 'http://api.openweathermap.org/data/2.5/%s'
 DEBUG          = __addon__.getSetting('Debug')
@@ -39,13 +37,11 @@ TEMPUNIT       = unicode(xbmc.getRegion('tempunit'),encoding='utf-8')
 MAXDAYS        = 6
 
 def log(txt):
-#    if DEBUG == 'true':
-    if True:
+    if DEBUG == 'true':
         if isinstance (txt,str):
             txt = txt.decode("utf-8")
         message = u'%s: %s' % (__addonid__, txt)
-#        xbmc.log(msg=message.encode("utf-8"), level=xbmc.LOGDEBUG)
-        xbmc.log(msg=message.encode("utf-8"), level=xbmc.LOGINFO) # enable normal logging for testing purposes
+        xbmc.log(msg=message.encode("utf-8"), level=xbmc.LOGDEBUG)
 
 def clear():
     set_property('Current.Condition'     , 'N/A')
@@ -170,10 +166,9 @@ def location(string):
                 locs.append(location + ' (' + locationcountry + ')')
             locids.append(locationid)
             locdegs.append(locdeg)
-    print locs
-    print locids
-    print locdegs
-
+    log('locs' % locs)
+    log('locids' % locids)
+    log('locdegs' % locdegs)
     return locs, locids, locdegs
 
 def forecast(loc,locid,locationdeg):
@@ -207,6 +202,17 @@ def forecast(loc,locid,locationdeg):
     elif y == tile_max:
         imgs = [[x-1,y-1], [x,y-1], [x+1,y-1], [x-1,y], [x,y], [x+1, y], [x-1,0], [x,0], [x+1,0]]
     streetthread_created = False
+    # delete old maps
+    if xbmcvfs.exists(precipmapdir):
+        shutil.rmtree(precipmapdir)
+    if xbmcvfs.exists(cloudsmapdir):
+        shutil.rmtree(cloudsmapdir)
+    if xbmcvfs.exists(tempmapdir):
+        shutil.rmtree(tempmapdir)
+    if xbmcvfs.exists(windmapdir):
+        shutil.rmtree(windmapdir)
+    if xbmcvfs.exists(pressuremapdir):
+        shutil.rmtree(pressuremapdir)
     if not xbmcvfs.exists(streetmapdir):
         xbmcvfs.mkdirs(streetmapdir)
         thread_street = get_tiles(streetmapdir, 'streetmap.png', imgs, street_url) # only have to download the streetmap once, unless location or zoom has changed
@@ -214,23 +220,23 @@ def forecast(loc,locid,locationdeg):
         streetthread_created = True
     if not xbmcvfs.exists(precipmapdir):
         xbmcvfs.mkdirs(precipmapdir)
-    thread_precip = get_tiles(precipmapdir, 'precipmap.png', imgs, precip_url)
+    thread_precip = get_tiles(precipmapdir, 'precipmap-%s.png', imgs, precip_url)
     thread_precip.start()
     if not xbmcvfs.exists(cloudsmapdir):
         xbmcvfs.mkdirs(cloudsmapdir)
-    thread_clouds = get_tiles(cloudsmapdir, 'cloudsmap.png', imgs, clouds_url)
+    thread_clouds = get_tiles(cloudsmapdir, 'cloudsmap-%s.png', imgs, clouds_url)
     thread_clouds.start()
     if not xbmcvfs.exists(tempmapdir):
         xbmcvfs.mkdirs(tempmapdir)
-    thread_temp = get_tiles(tempmapdir, 'tempmap.png', imgs, temp_url)
+    thread_temp = get_tiles(tempmapdir, 'tempmap-%s.png', imgs, temp_url)
     thread_temp.start()
     if not xbmcvfs.exists(windmapdir):
         xbmcvfs.mkdirs(windmapdir)
-    thread_wind = get_tiles(windmapdir, 'windmap.png', imgs, wind_url)
+    thread_wind = get_tiles(windmapdir, 'windmap-%s.png', imgs, wind_url)
     thread_wind.start()
     if not xbmcvfs.exists(pressuremapdir):
         xbmcvfs.mkdirs(pressuremapdir)
-    thread_pressure = get_tiles(pressuremapdir, 'pressuremap.png', imgs, pressure_url)
+    thread_pressure = get_tiles(pressuremapdir, 'pressuremap-%s.png', imgs, pressure_url)
     thread_pressure.start()
     log('weather location: %s' % locid)
     for count in range (0, 6):
@@ -736,8 +742,8 @@ def hourly_props(data, daynum):
             set_property('Hourly.%i.Temperature'     % (count+1), str(int(round(item['main']['temp'] * 1.8 + 32))) + TEMPUNIT)
             set_property('Hourly.%i.HighTemperature' % (count+1), str(int(round(item['main']['temp_max'] * 1.8 + 32))) + TEMPUNIT)
             set_property('Hourly.%i.LowTemperature'  % (count+1), str(int(round(item['main']['temp_min'] * 1.8 + 32))) + TEMPUNIT)
-            set_property('Hourly.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['main']['temp'])), item['main']['humidity'], 'C') + TEMPUNIT)
-            set_property('Hourly.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['main']['temp'])), int(round(item['wind']['speed'])), 'C') + TEMPUNIT)
+            set_property('Hourly.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['main']['temp'])), item['main']['humidity'], 'F') + TEMPUNIT)
+            set_property('Hourly.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['main']['temp'])), int(round(item['wind']['speed'])), 'F') + TEMPUNIT)
             set_property('Hourly.%i.Pressure'        % (count+1), str(int(round(item['main']['pressure'] / 33.86))) + 'in')
             if item['main'].has_key('sea_level'):
                 set_property('Hourly.%i.SeaLevel'    % (count+1), str(int(round(item['main']['sea_level'] / 33.86))) + 'in')
@@ -820,8 +826,8 @@ def hourly_props(data, daynum):
                     set_property('36Hour.%i.Temperature'     % (count+1), str(int(round(item['main']['temp'] * 1.8 + 32))) + TEMPUNIT)
                     set_property('36Hour.%i.HighTemperature' % (count+1), str(int(round(item['main']['temp_max'] * 1.8 + 32))) + TEMPUNIT)
                     set_property('36Hour.%i.LowTemperature'  % (count+1), str(int(round(item['main']['temp_min'] * 1.8 + 32))) + TEMPUNIT)
-                    set_property('36Hour.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['main']['temp'])), item['main']['humidity'], 'C') + TEMPUNIT)
-                    set_property('36Hour.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['main']['temp'])), int(round(item['wind']['speed'])), 'C') + TEMPUNIT)
+                    set_property('36Hour.%i.DewPoint'        % (count+1), DEW_POINT(int(round(item['main']['temp'])), item['main']['humidity'], 'F') + TEMPUNIT)
+                    set_property('36Hour.%i.FeelsLike'       % (count+1), FEELS_LIKE(int(round(item['main']['temp'])), int(round(item['wind']['speed'])), 'F') + TEMPUNIT)
                     set_property('36Hour.%i.Pressure'        % (count+1), str(int(round(item['main']['pressure'] / 33.86))) + 'in')
                     rain = 0
                     snow = 0
@@ -879,6 +885,7 @@ class get_tiles(threading.Thread):
         for img in self.imgs:
             try:
                 query = self.url % (ZOOM, img[0], img[1])
+                print query
                 req = urllib2.Request(query)
                 req.add_header('Accept-encoding', 'gzip')
                 response = urllib2.urlopen(req)
@@ -918,7 +925,8 @@ class get_tiles(threading.Thread):
                 out.paste( tile, (imx, imy), tile.convert('RGBA') )
                 imx += 256
             imy += 256
-        out.save(os.path.join(self.mapdir,self.mapfile))
+        stamp = int(time.time())
+        out.save(os.path.join(self.mapdir,self.mapfile % str(stamp)))
 
 class MyMonitor(xbmc.Monitor):
     def __init__(self, *args, **kwargs):
