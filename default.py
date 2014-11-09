@@ -259,7 +259,7 @@ def forecast(loc,locid,locationdeg):
     daily_string = 'forecast/daily?%s&lang=%s&APPID=%s&units=metric&cnt=16' % (query, lang, APPID)
     retry = 0
     failed = False
-    while (retry < 6) and (not MONITOR.abortRequested()):
+    while (retry < 6) and (not xbmc.abortRequested):
         current_data = get_data(current_string)
         log('current data: %s' % current_data)
         if current_data != '':
