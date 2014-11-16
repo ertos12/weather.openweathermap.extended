@@ -37,11 +37,13 @@ TEMPUNIT       = unicode(xbmc.getRegion('tempunit'),encoding='utf-8')
 MAXDAYS        = 6
 
 def log(txt):
-    if DEBUG == 'true':
+#    if DEBUG == 'true':
+    if True:
         if isinstance (txt,str):
             txt = txt.decode("utf-8")
         message = u'%s: %s' % (__addonid__, txt)
-        xbmc.log(msg=message.encode("utf-8"), level=xbmc.LOGDEBUG)
+#        xbmc.log(msg=message.encode("utf-8"), level=xbmc.LOGDEBUG)
+        xbmc.log(msg=message.encode("utf-8"), level=xbmc.LOGINFO) # spam the log for the time being
 
 def clear():
     set_property('Current.Condition'     , 'N/A')
@@ -215,28 +217,31 @@ def forecast(loc,locid,locationdeg):
         shutil.rmtree(pressuremapdir)
     if not xbmcvfs.exists(streetmapdir):
         xbmcvfs.mkdirs(streetmapdir)
-        thread_street = get_tiles(streetmapdir, 'streetmap.png', imgs, street_url) # only have to download the streetmap once, unless location or zoom has changed
+    # download the streetmap once, unless location or zoom has changed
+    if not xbmcvfs.exists(os.path.join(streetmapdir, 'streetmap.png')):
+        thread_street = get_tiles(streetmapdir, 'streetmap.png', imgs, street_url)
         thread_street.start()
         streetthread_created = True
+    stamp = int(time.time())
     if not xbmcvfs.exists(precipmapdir):
         xbmcvfs.mkdirs(precipmapdir)
-    thread_precip = get_tiles(precipmapdir, 'precipmap-%s.png', imgs, precip_url)
+    thread_precip = get_tiles(precipmapdir, 'precipmap-%s.png', stamp, imgs, precip_url)
     thread_precip.start()
     if not xbmcvfs.exists(cloudsmapdir):
         xbmcvfs.mkdirs(cloudsmapdir)
-    thread_clouds = get_tiles(cloudsmapdir, 'cloudsmap-%s.png', imgs, clouds_url)
+    thread_clouds = get_tiles(cloudsmapdir, 'cloudsmap-%s.png', stamp, imgs, clouds_url)
     thread_clouds.start()
     if not xbmcvfs.exists(tempmapdir):
         xbmcvfs.mkdirs(tempmapdir)
-    thread_temp = get_tiles(tempmapdir, 'tempmap-%s.png', imgs, temp_url)
+    thread_temp = get_tiles(tempmapdir, 'tempmap-%s.png', stamp, imgs, temp_url)
     thread_temp.start()
     if not xbmcvfs.exists(windmapdir):
         xbmcvfs.mkdirs(windmapdir)
-    thread_wind = get_tiles(windmapdir, 'windmap-%s.png', imgs, wind_url)
+    thread_wind = get_tiles(windmapdir, 'windmap-%s.png', stamp, imgs, wind_url)
     thread_wind.start()
     if not xbmcvfs.exists(pressuremapdir):
         xbmcvfs.mkdirs(pressuremapdir)
-    thread_pressure = get_tiles(pressuremapdir, 'pressuremap-%s.png', imgs, pressure_url)
+    thread_pressure = get_tiles(pressuremapdir, 'pressuremap-%s.png', stamp, imgs, pressure_url)
     thread_pressure.start()
     log('weather location: %s' % locid)
     for count in range (0, 6):
@@ -323,11 +328,11 @@ def forecast(loc,locid,locationdeg):
     set_property('Map.3.Area', xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s/streetmap.png' % (__addonid__, tag)))
     set_property('Map.4.Area', xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s/streetmap.png' % (__addonid__, tag)))
     set_property('Map.5.Area', xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s/streetmap.png' % (__addonid__, tag)))
-    set_property('Map.1.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/precipmap/precipmap.png' % __addonid__))
-    set_property('Map.2.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/cloudsmap/cloudsmap.png' % __addonid__))
-    set_property('Map.3.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/tempmap/tempmap.png' % __addonid__))
-    set_property('Map.4.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/windmap/windmap.png' % __addonid__))
-    set_property('Map.5.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/pressuremap/pressuremap.png' % __addonid__))
+    set_property('Map.1.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/precipmap/precipmap-%s.png' % (__addonid__, stamp)))
+    set_property('Map.2.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/cloudsmap/cloudsmap-%s.png' % (__addonid__, stamp)))
+    set_property('Map.3.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/tempmap/tempmap-%s.png' % (__addonid__, stamp)))
+    set_property('Map.4.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/windmap/windmap-%s.png' % (__addonid__, stamp)))
+    set_property('Map.5.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/pressuremap/pressuremap-%s.png' % (__addonid__, stamp)))
     set_property('Map.1.Heading', xbmc.getLocalizedString(1448))
     set_property('Map.2.Heading', xbmc.getLocalizedString(387))
     set_property('Map.3.Heading', xbmc.getLocalizedString(1375))
@@ -408,10 +413,16 @@ def current_props(data,loc):
         rain = 0
         snow = 0
         if data.has_key('rain'):
-            rain = data['rain']['3h']
+            if data['rain'].has_key('1h'):
+                rain = data['rain']['1h']
+            elif data['rain'].has_key('3h'):
+                rain = data['rain']['3h']
             set_property('Current.Rain'             , str(round(rain *  0.04 ,2)) + ' in')
         if data.has_key('snow'):
-            snow = data['snow']['3h']
+            if data['snow'].has_key('1h'):
+                snow = data['snow']['1h']
+            elif data['snow'].has_key('3h'):
+                snow = data['snow']['3h']
             set_property('Current.Snow'             , str(round(snow *  0.04 ,2)) + ' in')
         precip = rain + snow
         set_property('Current.Precipitation'        , str(round(precip *  0.04 ,2)) + ' in')
@@ -873,9 +884,10 @@ def hourly_props(data, daynum):
                 break
 
 class get_tiles(threading.Thread):
-    def __init__(self, mapdir, mapfile, imgs, url):
+    def __init__(self, mapdir, mapfile, stamp, imgs, url):
         self.mapdir = mapdir
         self.mapfile = mapfile
+        self.stamp = stamp
         self.imgs = imgs
         self.url = url
         threading.Thread.__init__(self)
@@ -885,7 +897,6 @@ class get_tiles(threading.Thread):
         for img in self.imgs:
             try:
                 query = self.url % (ZOOM, img[0], img[1])
-                print query
                 req = urllib2.Request(query)
                 req.add_header('Accept-encoding', 'gzip')
                 response = urllib2.urlopen(req)
@@ -925,8 +936,10 @@ class get_tiles(threading.Thread):
                 out.paste( tile, (imx, imy), tile.convert('RGBA') )
                 imx += 256
             imy += 256
-        stamp = int(time.time())
-        out.save(os.path.join(self.mapdir,self.mapfile % str(stamp)))
+        if not self.mapfile == 'streetmap.png':
+            out.save(os.path.join(self.mapdir,self.mapfile % str(self.stamp)))
+        else:
+            out.save(os.path.join(self.mapdir,self.mapfile))
 
 class MyMonitor(xbmc.Monitor):
     def __init__(self, *args, **kwargs):
