@@ -217,12 +217,12 @@ def forecast(loc,locid,locationdeg):
         shutil.rmtree(pressuremapdir)
     if not xbmcvfs.exists(streetmapdir):
         xbmcvfs.mkdirs(streetmapdir)
+    stamp = int(time.time())
     # download the streetmap once, unless location or zoom has changed
     if not xbmcvfs.exists(os.path.join(streetmapdir, 'streetmap.png')):
-        thread_street = get_tiles(streetmapdir, 'streetmap.png', imgs, street_url)
+        thread_street = get_tiles(streetmapdir, 'streetmap.png', stamp, imgs, street_url)
         thread_street.start()
         streetthread_created = True
-    stamp = int(time.time())
     if not xbmcvfs.exists(precipmapdir):
         xbmcvfs.mkdirs(precipmapdir)
     thread_precip = get_tiles(precipmapdir, 'precipmap-%s.png', stamp, imgs, precip_url)
