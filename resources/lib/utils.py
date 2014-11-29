@@ -363,3 +363,14 @@ def GET_TILE(lat_deg, lon_deg, zoom):
   ytile = int((1.0 - math.log(math.tan(lat_rad) + (1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
   return (xtile, ytile)
 
+def CAPITALIZE(string):
+    string = string[0].upper() + string[1:]
+    return string
+
+def UPPERCASE(string):
+    words = []
+    for word in string.split(' '):
+        word = word[0].upper() + word[1:]
+        words.append(word)
+    string = ' '.join(words)
+    return string
