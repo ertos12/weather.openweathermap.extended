@@ -464,6 +464,8 @@ def current_props(data,loc):
         set_property('Current.WindDirEnd'       , xbmc.getLocalizedString(WIND_DIR(data['wind']['var_end'])))
     set_property('Forecast.City'                , data['name'])
     set_property('Forecast.Country'             , data['sys']['country'])
+    set_property('Forecast.Latitude'            , str(data['coord']['lat']))
+    set_property('Forecast.Longitude'           , str(data['coord']['lon']))
     set_property('Forecast.Updated'             , convert_date(data['dt']))
     set_property('Today.Sunrise'                , convert_date(data['sys']['sunrise']).split('  ')[0])
     set_property('Today.Sunset'                 , convert_date(data['sys']['sunset']).split('  ')[0])
@@ -931,7 +933,10 @@ class get_tiles(threading.Thread):
             for x in range(0,3):
                 tile_file = os.path.join(self.mapdir,str(count)+".png")
                 count += 1
-                tile = Image.open(tile_file)
+                try:
+                    tile = Image.open(tile_file)
+                except:
+                    return
                 out.paste( tile, (imx, imy), tile.convert('RGBA') )
                 imx += 256
             imy += 256
