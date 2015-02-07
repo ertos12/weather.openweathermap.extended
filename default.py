@@ -27,6 +27,7 @@ DEBUG          = __addon__.getSetting('Debug')
 LATLON         = __addon__.getSetting('LatLon')
 WEEKEND        = __addon__.getSetting('Weekend')
 STATION        = __addon__.getSetting('Station')
+MAP            = __addon__.getSetting('Map')
 ZOOM           = int(__addon__.getSetting('Zoom')) + 3
 WEATHER_WINDOW = xbmcgui.Window(12600)
 WEATHER_ICON   = xbmc.translatePath('special://temp/weather/%s.png').decode("utf-8")
@@ -173,47 +174,12 @@ def location(string):
     return locs, locids, locdegs
 
 def forecast(loc,locid,locationdeg):
-    street_url = 'http://c.tile.openstreetmap.org/%i/%i/%i.png'
-    precip_url = 'http://undefined.tile.openweathermap.org/map/precipitation/%i/%i/%i.png'
-    clouds_url = 'http://undefined.tile.openweathermap.org/map/clouds/%i/%i/%i.png'
-    temp_url = 'http://undefined.tile.openweathermap.org/map/temp/%i/%i/%i.png'
-    wind_url = 'http://undefined.tile.openweathermap.org/map/wind/%i/%i/%i.png'
-    pressure_url = 'http://undefined.tile.openweathermap.org/map/pressure_cntr/%i/%i/%i.png'
     md5 = hashlib.md5()
     md5.update(str(locationdeg) + str(ZOOM))
     tag = md5.hexdigest()
+    street_url = 'http://c.tile.openstreetmap.org/%i/%i/%i.png'
     streetmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s/' % (__addonid__, tag))
-    precipmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/precipmap/' % __addonid__)
-    cloudsmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/cloudsmap/' % __addonid__)
-    tempmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/tempmap/' % __addonid__)
-    windmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/windmap/' % __addonid__)
-    pressuremapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/pressuremap/' % __addonid__)
-    lat = float(eval(locationdeg)[0])
-    lon = float(eval(locationdeg)[1])
-    x, y = GET_TILE(lat, lon, ZOOM)
-    imgs = [[x-1,y-1], [x,y-1], [x+1,y-1], [x-1,y], [x,y], [x+1,y], [x-1,y+1], [x,y+1], [x+1,y+1]]
-    # adjust for locations on the edge of the map
-    tile_max = 2**ZOOM
-    if x == 0:
-        imgs = [[tile_max,y-1], [x,y-1], [x+1,y-1], [tile_max,y], [x,y], [x+1,y], [tile_max,y+1], [x,y+1], [x+1,y+1]]
-    elif x == tile_max:
-        imgs = [[x-1,y-1], [x,y-1], [0,y-1], [x-1,y], [x,y], [0,y], [x-1,y+1], [x,y+1], [0,y+1]]
-    if y == 0:
-        imgs = [[x-1,tile_max], [x,tile_max], [x+1,tile_max], [x-1,y], [x,y], [x+1,y], [x-1,y+1], [x,y+1], [x+1,y+1]]
-    elif y == tile_max:
-        imgs = [[x-1,y-1], [x,y-1], [x+1,y-1], [x-1,y], [x,y], [x+1, y], [x-1,0], [x,0], [x+1,0]]
     streetthread_created = False
-    # delete old maps
-    if xbmcvfs.exists(precipmapdir):
-        shutil.rmtree(precipmapdir)
-    if xbmcvfs.exists(cloudsmapdir):
-        shutil.rmtree(cloudsmapdir)
-    if xbmcvfs.exists(tempmapdir):
-        shutil.rmtree(tempmapdir)
-    if xbmcvfs.exists(windmapdir):
-        shutil.rmtree(windmapdir)
-    if xbmcvfs.exists(pressuremapdir):
-        shutil.rmtree(pressuremapdir)
     if not xbmcvfs.exists(streetmapdir):
         xbmcvfs.mkdirs(streetmapdir)
     stamp = int(time.time())
@@ -222,26 +188,62 @@ def forecast(loc,locid,locationdeg):
         thread_street = get_tiles(streetmapdir, 'streetmap.png', stamp, imgs, street_url)
         thread_street.start()
         streetthread_created = True
-    if not xbmcvfs.exists(precipmapdir):
-        xbmcvfs.mkdirs(precipmapdir)
-    thread_precip = get_tiles(precipmapdir, 'precipmap-%s.png', stamp, imgs, precip_url)
-    thread_precip.start()
-    if not xbmcvfs.exists(cloudsmapdir):
-        xbmcvfs.mkdirs(cloudsmapdir)
-    thread_clouds = get_tiles(cloudsmapdir, 'cloudsmap-%s.png', stamp, imgs, clouds_url)
-    thread_clouds.start()
-    if not xbmcvfs.exists(tempmapdir):
-        xbmcvfs.mkdirs(tempmapdir)
-    thread_temp = get_tiles(tempmapdir, 'tempmap-%s.png', stamp, imgs, temp_url)
-    thread_temp.start()
-    if not xbmcvfs.exists(windmapdir):
-        xbmcvfs.mkdirs(windmapdir)
-    thread_wind = get_tiles(windmapdir, 'windmap-%s.png', stamp, imgs, wind_url)
-    thread_wind.start()
-    if not xbmcvfs.exists(pressuremapdir):
-        xbmcvfs.mkdirs(pressuremapdir)
-    thread_pressure = get_tiles(pressuremapdir, 'pressuremap-%s.png', stamp, imgs, pressure_url)
-    thread_pressure.start()
+    if MAP == 'true':
+        precip_url = 'http://undefined.tile.openweathermap.org/map/precipitation/%i/%i/%i.png'
+        clouds_url = 'http://undefined.tile.openweathermap.org/map/clouds/%i/%i/%i.png'
+        temp_url = 'http://undefined.tile.openweathermap.org/map/temp/%i/%i/%i.png'
+        wind_url = 'http://undefined.tile.openweathermap.org/map/wind/%i/%i/%i.png'
+        pressure_url = 'http://undefined.tile.openweathermap.org/map/pressure_cntr/%i/%i/%i.png'
+        precipmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/precipmap/' % __addonid__)
+        cloudsmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/cloudsmap/' % __addonid__)
+        tempmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/tempmap/' % __addonid__)
+        windmapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/windmap/' % __addonid__)
+        pressuremapdir = xbmc.translatePath('special://profile/addon_data/%s/maps/pressuremap/' % __addonid__)
+        lat = float(eval(locationdeg)[0])
+        lon = float(eval(locationdeg)[1])
+        x, y = GET_TILE(lat, lon, ZOOM)
+        imgs = [[x-1,y-1], [x,y-1], [x+1,y-1], [x-1,y], [x,y], [x+1,y], [x-1,y+1], [x,y+1], [x+1,y+1]]
+        # adjust for locations on the edge of the map
+        tile_max = 2**ZOOM
+        if x == 0:
+            imgs = [[tile_max,y-1], [x,y-1], [x+1,y-1], [tile_max,y], [x,y], [x+1,y], [tile_max,y+1], [x,y+1], [x+1,y+1]]
+        elif x == tile_max:
+            imgs = [[x-1,y-1], [x,y-1], [0,y-1], [x-1,y], [x,y], [0,y], [x-1,y+1], [x,y+1], [0,y+1]]
+        if y == 0:
+            imgs = [[x-1,tile_max], [x,tile_max], [x+1,tile_max], [x-1,y], [x,y], [x+1,y], [x-1,y+1], [x,y+1], [x+1,y+1]]
+        elif y == tile_max:
+            imgs = [[x-1,y-1], [x,y-1], [x+1,y-1], [x-1,y], [x,y], [x+1, y], [x-1,0], [x,0], [x+1,0]]
+        # delete old maps
+        if xbmcvfs.exists(precipmapdir):
+            shutil.rmtree(precipmapdir)
+        if xbmcvfs.exists(cloudsmapdir):
+            shutil.rmtree(cloudsmapdir)
+        if xbmcvfs.exists(tempmapdir):
+            shutil.rmtree(tempmapdir)
+        if xbmcvfs.exists(windmapdir):
+            shutil.rmtree(windmapdir)
+        if xbmcvfs.exists(pressuremapdir):
+            shutil.rmtree(pressuremapdir)
+        if not xbmcvfs.exists(precipmapdir):
+            xbmcvfs.mkdirs(precipmapdir)
+        thread_precip = get_tiles(precipmapdir, 'precipmap-%s.png', stamp, imgs, precip_url)
+        thread_precip.start()
+        if not xbmcvfs.exists(cloudsmapdir):
+            xbmcvfs.mkdirs(cloudsmapdir)
+        thread_clouds = get_tiles(cloudsmapdir, 'cloudsmap-%s.png', stamp, imgs, clouds_url)
+        thread_clouds.start()
+        if not xbmcvfs.exists(tempmapdir):
+            xbmcvfs.mkdirs(tempmapdir)
+        thread_temp = get_tiles(tempmapdir, 'tempmap-%s.png', stamp, imgs, temp_url)
+        thread_temp.start()
+        if not xbmcvfs.exists(windmapdir):
+            xbmcvfs.mkdirs(windmapdir)
+        thread_wind = get_tiles(windmapdir, 'windmap-%s.png', stamp, imgs, wind_url)
+        thread_wind.start()
+        if not xbmcvfs.exists(pressuremapdir):
+            xbmcvfs.mkdirs(pressuremapdir)
+        thread_pressure = get_tiles(pressuremapdir, 'pressuremap-%s.png', stamp, imgs, pressure_url)
+        thread_pressure.start()
     log('weather location: %s' % locid)
     for count in range (0, 6):
         set_property('Map.%i.Area'       % count, '')
@@ -317,21 +319,29 @@ def forecast(loc,locid,locationdeg):
         hourly_props(hourly_weather, daynum)
     if streetthread_created:
         thread_street.join()
-    thread_precip.join()
-    thread_clouds.join()
-    thread_temp.join()
-    thread_wind.join()
-    thread_pressure.join()
     set_property('Map.1.Area', xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s/streetmap.png' % (__addonid__, tag)))
     set_property('Map.2.Area', xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s/streetmap.png' % (__addonid__, tag)))
     set_property('Map.3.Area', xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s/streetmap.png' % (__addonid__, tag)))
     set_property('Map.4.Area', xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s/streetmap.png' % (__addonid__, tag)))
     set_property('Map.5.Area', xbmc.translatePath('special://profile/addon_data/%s/maps/streetmap-%s/streetmap.png' % (__addonid__, tag)))
-    set_property('Map.1.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/precipmap/precipmap-%s.png' % (__addonid__, stamp)))
-    set_property('Map.2.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/cloudsmap/cloudsmap-%s.png' % (__addonid__, stamp)))
-    set_property('Map.3.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/tempmap/tempmap-%s.png' % (__addonid__, stamp)))
-    set_property('Map.4.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/windmap/windmap-%s.png' % (__addonid__, stamp)))
-    set_property('Map.5.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/pressuremap/pressuremap-%s.png' % (__addonid__, stamp)))
+    if MAP == 'true':
+        thread_precip.join()
+        thread_clouds.join()
+        thread_temp.join()
+        thread_wind.join()
+        thread_pressure.join()
+        set_property('Map.1.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/precipmap/precipmap-%s.png' % (__addonid__, stamp)))
+        set_property('Map.2.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/cloudsmap/cloudsmap-%s.png' % (__addonid__, stamp)))
+        set_property('Map.3.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/tempmap/tempmap-%s.png' % (__addonid__, stamp)))
+        set_property('Map.4.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/windmap/windmap-%s.png' % (__addonid__, stamp)))
+        set_property('Map.5.Layer', xbmc.translatePath('special://profile/addon_data/%s/maps/pressuremap/pressuremap-%s.png' % (__addonid__, stamp)))
+    else:
+        set_property('Map.1.Layer', '')
+        set_property('Map.2.Layer', '')
+        set_property('Map.3.Layer', '')
+        set_property('Map.4.Layer', '')
+        set_property('Map.5.Layer', '')
+
     set_property('Map.1.Heading', xbmc.getLocalizedString(1448))
     set_property('Map.2.Heading', xbmc.getLocalizedString(387))
     set_property('Map.3.Heading', xbmc.getLocalizedString(1375))
