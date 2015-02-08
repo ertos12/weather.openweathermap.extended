@@ -164,6 +164,7 @@ def forecast(loc,locid,locationdeg):
         lon = float(eval(locationdeg)[1])
         xbmc.executebuiltin('XBMC.RunScript(%s,lat=%s&lon=%s)' % (os.path.join( __resource__ , "maps.py"), lat, lon))
     else:
+        set_property('Map.IsFetched', '')
         for count in range (1, 6):
             set_property('Map.%i.Layer' % count, '')
             set_property('Map.%i.Area' % count, '')
