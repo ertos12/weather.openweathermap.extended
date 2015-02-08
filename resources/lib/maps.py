@@ -12,7 +12,7 @@ sys.path.append(__resource__)
 
 from utils import *
 
-ZOOM           = int(__addon__.getSetting('Zoom')) + 3
+ZOOM = int(__addon__.getSetting('Zoom')) + 3
 
 
 class Main:
@@ -182,6 +182,8 @@ class get_tiles(threading.Thread):
                     log('failed to save image')
                     return
             count += 1
+            if MONITOR.abortRequested():
+                return
         self.merge_tiles()
     
     def merge_tiles(self):
@@ -204,6 +206,12 @@ class get_tiles(threading.Thread):
             out.save(os.path.join(self.mapdir,self.mapfile % str(self.stamp)))
         else:
             out.save(os.path.join(self.mapdir,self.mapfile))
+
+class MyMonitor(xbmc.Monitor):
+    def __init__(self, *args, **kwargs):
+        xbmc.Monitor.__init__(self)
+
+MONITOR = MyMonitor()
 
 if ( __name__ == "__main__" ):
     Main()
