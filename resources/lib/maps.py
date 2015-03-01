@@ -1,4 +1,4 @@
-import time, urllib2, threading, hashlib, shutil, gzip
+import os, time, urllib2, threading, hashlib, shutil, gzip
 import xbmc, xbmcvfs, xbmcaddon
 from StringIO import StringIO
 from PIL import Image
