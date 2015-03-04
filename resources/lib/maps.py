@@ -2,6 +2,7 @@ import os, time, urllib2, threading, hashlib, shutil, gzip
 import xbmc, xbmcvfs, xbmcaddon
 from StringIO import StringIO
 from PIL import Image
+from PIL import ImageEnhance
 
 __addon__      = xbmcaddon.Addon('weather.openweathermap.extended')
 __addonid__    = __addon__.getAddonInfo('id')
@@ -202,6 +203,9 @@ class get_tiles(threading.Thread):
                 out.paste( tile, (imx, imy), tile.convert('RGBA') )
                 imx += 256
             imy += 256
+        if self.mapfile[0:6] == 'precip' or self.mapfile[0:6] == 'clouds':
+            enhancer = ImageEnhance.Brightness(out)
+            out = enhancer.enhance(0.3)
         if not self.mapfile == 'streetmap.png':
             out.save(os.path.join(self.mapdir,self.mapfile % str(self.stamp)))
         else:

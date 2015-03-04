@@ -785,7 +785,7 @@ set_property('Weekend.IsFetched'  , 'true')
 set_property('36Hour.IsFetched'   , 'true')
 set_property('Hourly.IsFetched'   , 'true')
 set_property('Alerts.IsFetched'   , '')
-set_property('WeatherProvider'    , __addonname__)
+set_property('WeatherProvider'    , __language__(32000))
 set_property('WeatherProviderLogo', xbmc.translatePath(os.path.join(__cwd__, 'resources', 'graphics', 'banner.png')))
 
 if sys.argv[1].startswith('Location'):
