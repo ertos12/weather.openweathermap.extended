@@ -200,7 +200,7 @@ def forecast(loc,locid,locationdeg):
                 return
         else:
             retry += 1
-            xbmc.sleep(10000)
+            MONITOR.waitForAbort(10)
             log('weather download failed')
             if retry == 6:
                 log('fatal, giving up')
