@@ -159,10 +159,10 @@ def location(string):
 
 def forecast(loc,locid,locationdeg):
     log('weather location: %s' % locid)
-    if MAP == 'true':
+    if MAP == 'true' and xbmc.getCondVisibility('System.HasAddon(script.openweathermap.maps)'):
         lat = float(eval(locationdeg)[0])
         lon = float(eval(locationdeg)[1])
-        xbmc.executebuiltin('XBMC.RunScript(%s,lat=%s&lon=%s)' % (os.path.join( __resource__ , "maps.py"), lat, lon))
+        xbmc.executebuiltin('XBMC.RunAddon(script.openweathermap.maps,lat=%s&lon=%s)' % (lat, lon))
     else:
         set_property('Map.IsFetched', '')
         for count in range (1, 6):

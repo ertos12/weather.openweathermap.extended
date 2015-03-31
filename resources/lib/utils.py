@@ -375,14 +375,6 @@ def DEW_POINT( Tc=0, RH=93, D='C', minRH=( 0, 0.075 )[ 0 ] ):
     else:
         return str( int( round( DewPoint * 1.8 + 32 ) ) )
 
-# http://wiki.openstreetmap.org/wiki/Slippy_map_tilenames#Lon..2Flat._to_tile_numbers
-def GET_TILE(lat_deg, lon_deg, zoom):
-  lat_rad = math.radians(lat_deg)
-  n = 2.0 ** zoom
-  xtile = int((lon_deg + 180.0) / 360.0 * n)
-  ytile = int((1.0 - math.log(math.tan(lat_rad) + (1 / math.cos(lat_rad))) / math.pi) / 2.0 * n)
-  return (xtile, ytile)
-
 def CAPITALIZE(string):
     string = string[0].upper() + string[1:]
     return string
