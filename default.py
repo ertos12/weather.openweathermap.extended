@@ -76,9 +76,9 @@ def get_data(search_string):
 
 def convert_date(stamp):
     date_time = time.localtime(stamp)
-    if DATEFORMAT[1] == 'd':
+    if DATEFORMAT[1] == 'd' or DATEFORMAT[0] == 'D':
         localdate = time.strftime('%d-%m-%Y', date_time)
-    elif DATEFORMAT[1] == 'm':
+    elif DATEFORMAT[1] == 'm' or DATEFORMAT[0] == 'M':
         localdate = time.strftime('%m-%d-%Y', date_time)
     else:
         localdate = time.strftime('%Y-%m-%d', date_time)
@@ -381,7 +381,7 @@ def daily_props(data):
         weathercode = WEATHER_CODES[code]
         set_property('Daily.%i.LongDay'         % (count+1), get_weekday(item['dt'], 'l'))
         set_property('Daily.%i.ShortDay'        % (count+1), get_weekday(item['dt'], 's'))
-        if DATEFORMAT[1] == 'd':
+        if DATEFORMAT[1] == 'd' or DATEFORMAT[0] == 'D':
             set_property('Daily.%i.LongDate'    % (count+1), get_month(item['dt'], 'dl'))
             set_property('Daily.%i.ShortDate'   % (count+1), get_month(item['dt'], 'ds'))
         else:
@@ -463,7 +463,7 @@ def daily_props(data):
             weathercode = WEATHER_CODES[code]
             set_property('Weekend.%i.LongDay'         % (count+1), get_weekday(item['dt'], 'l'))
             set_property('Weekend.%i.ShortDay'        % (count+1), get_weekday(item['dt'], 's'))
-            if DATEFORMAT[1] == 'd':
+            if DATEFORMAT[1] == 'd' or DATEFORMAT[0] == 'D':
                 set_property('Weekend.%i.LongDate'    % (count+1), get_month(item['dt'], 'dl'))
                 set_property('Weekend.%i.ShortDate'   % (count+1), get_month(item['dt'], 'ds'))
             else:
@@ -543,7 +543,7 @@ def daily_props(data):
         weathercode = WEATHER_CODES[code]
         set_property('36Hour.%i.LongDay'         % (count+1), get_weekday(item['dt'], 'l'))
         set_property('36Hour.%i.ShortDay'        % (count+1), get_weekday(item['dt'], 's'))
-        if DATEFORMAT[1] == 'd':
+        if DATEFORMAT[1] == 'd' or DATEFORMAT[0] == 'D':
             set_property('36Hour.%i.LongDate'    % (count+1), get_month(item['dt'], 'dl'))
             set_property('36Hour.%i.ShortDate'   % (count+1), get_month(item['dt'], 'ds'))
         else:
@@ -622,7 +622,7 @@ def hourly_props(data, daynum):
             code = code + 'n'
         weathercode = WEATHER_CODES[code]
         set_property('Hourly.%i.Time'            % (count+1), get_time(item['dt']))
-        if DATEFORMAT[1] == 'd':
+        if DATEFORMAT[1] == 'd' or DATEFORMAT[0] == 'D':
             set_property('Hourly.%i.LongDate'    % (count+1), get_month(item['dt'], 'dl'))
             set_property('Hourly.%i.ShortDate'   % (count+1), get_month(item['dt'], 'ds'))
         else:
@@ -706,7 +706,7 @@ def hourly_props(data, daynum):
                     code = code + 'n'
                 weathercode = WEATHER_CODES[code]
                 set_property('36Hour.%i.Time'            % (count+1), get_time(item['dt']))
-                if DATEFORMAT[1] == 'd':
+                if DATEFORMAT[1] == 'd' or DATEFORMAT[0] == 'D':
                     set_property('36Hour.%i.LongDate'    % (count+1), get_month(item['dt'], 'dl'))
                     set_property('36Hour.%i.ShortDate'   % (count+1), get_month(item['dt'], 'ds'))
                 else:

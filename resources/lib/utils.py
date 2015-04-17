@@ -8,6 +8,8 @@ WEATHER_WINDOW = xbmcgui.Window(12600)
 DEBUG          = __addon__.getSetting('Debug')
 TEMPUNIT       = unicode(xbmc.getRegion('tempunit'),encoding='utf-8')
 SPEEDUNIT      = xbmc.getRegion('speedunit')
+if SPEEDUNIT in ('ft/s', 'ft/min', 'ft/h', 'inch/s', 'yard/s', 'kts', ):
+    SPEEDUNIT = 'mph'
 
 
 def log(txt):
