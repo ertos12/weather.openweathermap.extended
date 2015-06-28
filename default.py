@@ -753,7 +753,7 @@ def hourly_props(data, daynum):
                 else:
                     set_property('36Hour.%i.WindDegree'      % (count+1), '')
                 if item['wind'].has_key('speed'):
-                    set_property('36Hour.%i.WindSpeed'           % (count+1), SPEED(item['wind']['speed']) + SPEEDUNIT)
+                    set_property('36Hour.%i.WindSpeed'       % (count+1), SPEED(item['wind']['speed']) + SPEEDUNIT)
                     set_property('36Hour.%i.FeelsLike'       % (count+1), FEELS_LIKE(item['main']['temp'], item['wind']['speed']) + TEMPUNIT)
                 else:
                     set_property('36Hour.%i.WindSpeed'       % (count+1), '')
