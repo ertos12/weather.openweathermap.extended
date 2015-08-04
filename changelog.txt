@@ -1,3 +1,6 @@
+v3.0.1
+- more verbose logging
+
 v3.0.0
 - use image resource for weather icons
 

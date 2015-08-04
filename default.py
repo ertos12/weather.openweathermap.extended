@@ -158,7 +158,9 @@ def location(string):
     return locs, locids, locdegs
 
 def forecast(loc,locid,locationdeg):
-    log('weather location: %s' % locid)
+    log('weather location id: %s' % locid)
+    log('weather location name: %s' % loc)
+    log('weather location deg: %s' % locationdeg)
     if MAP == 'true' and xbmc.getCondVisibility('System.HasAddon(script.openweathermap.maps)'):
         lat = float(eval(locationdeg)[0])
         lon = float(eval(locationdeg)[1])
@@ -802,7 +804,7 @@ class MyMonitor(xbmc.Monitor):
     def __init__(self, *args, **kwargs):
         xbmc.Monitor.__init__(self)
 
-log('version %s started: %s' % (__version__, sys.argv[1]))
+log('version %s started with argv: %s' % (__version__, sys.argv[1]))
 
 MONITOR = MyMonitor()
 set_property('Forecast.IsFetched' , 'true')
