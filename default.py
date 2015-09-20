@@ -25,7 +25,7 @@ LATLON         = __addon__.getSetting('LatLon')
 WEEKEND        = __addon__.getSetting('Weekend')
 STATION        = __addon__.getSetting('Station')
 MAP            = __addon__.getSetting('Map')
-WEATHER_ICON   = xbmc.translatePath('resource://resource.images.weathericons.default/%s.png').decode("utf-8")
+WEATHER_ICON   = xbmc.translatePath('%s.png').decode("utf-8")
 DATEFORMAT     = xbmc.getRegion('dateshort')
 TIMEFORMAT     = xbmc.getRegion('meridiem')
 LANGUAGE       = xbmc.getLanguage().lower()
@@ -304,6 +304,8 @@ def current_props(data,loc):
     set_property('Current.UVIndex'              , '') # not supported by openweathermap
     set_property('Current.OutlookIcon'          , '%s.png' % weathercode) # xbmc translates it to Current.ConditionIcon
     set_property('Current.FanartCode'           , weathercode)
+    set_property('Location'                     , loc)
+    set_property('Updated'                      , convert_date(data['dt']))
 # extended properties
     set_property('Current.Cloudiness'           , str(data['clouds']['all']) + '%')
     set_property('Current.ShortOutlook'         , data['weather'][0]['main'])
