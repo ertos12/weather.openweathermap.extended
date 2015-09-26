@@ -1,3 +1,6 @@
+v3.1.1
+- some fixes for personal weather stations
+
 v3.1.0
 - don't hardcode the icon path
 
