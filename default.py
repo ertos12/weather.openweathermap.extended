@@ -258,7 +258,10 @@ def station_props(data,loc):
     except:
         pass
     if data.has_key('last') and data['last'].has_key('calc') and data['last']['calc'].has_key('dewpoint'):
-        set_property('Current.DewPoint'         , str(int(round(data['last']['calc']['dewpoint'])))) # api values are NOT in K
+        if data['last']['main']['temp'] - data['last']['calc']['dewpoint'] > 100:
+            set_property('Current.DewPoint'     , str(int(round(data['last']['calc']['dewpoint'])))) # api values are in C
+        else:
+            set_property('Current.DewPoint'     , str(int(round(data['last']['calc']['dewpoint'])) - 273)) # api values are in K
     else:
         try:
             set_property('Current.DewPoint'     , DEW_POINT(data['last']['main']['temp'] -273, data['last']['main']['humidity'], False)) # api values are in K
@@ -271,7 +274,15 @@ def station_props(data,loc):
     if data.has_key('last') and data['last'].has_key('wind') and data['last']['wind'].has_key('gust'):
         set_property('Current.WindGust'         , SPEED(data['last']['wind']['gust']) + SPEEDUNIT)
     if data.has_key('last') and data['last'].has_key('rain') and data['last']['rain'].has_key('1h'):
-        set_property('Current.Rain'             , str(round(data['last']['rain']['1h'] *  0.04 ,2)) + ' in')
+        if 'F' in TEMPUNIT:
+            set_property('Current.Precipitation', str(round(data['last']['rain']['1h'] *  0.04 ,2)) + ' in')
+        else:
+            set_property('Current.Precipitation', str(int(round(data['last']['rain']['1h']))) + ' mm')
+    if data.has_key('last') and data['last'].has_key('main') and data['last']['main'].has_key('pressure'):
+        if 'F' in TEMPUNIT:
+            set_property('Current.Pressure'     , str(round(data['last']['main']['pressure'] / 33.86 ,2)) + ' in')
+        else:
+            set_property('Current.Pressure'     , str(data['last']['main']['pressure']) + ' mb')
 
 def current_props(data,loc):
 # standard properties
