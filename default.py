@@ -305,48 +305,24 @@ def current_props(data,loc):
 # extended properties
     set_property('Current.Cloudiness'           , str(data['clouds']['all']) + '%')
     set_property('Current.ShortOutlook'         , data['weather'][0]['main'])
-    set_property('Current.LowTemperature'       , TEMP(data['main']['temp_min']) + TEMPUNIT)
-    set_property('Current.HighTemperature'      , TEMP(data['main']['temp_max']) + TEMPUNIT)
-    if 'F' in TEMPUNIT:
-        set_property('Current.Pressure'             , str(round(data['main']['pressure'] / 33.86 ,2)) + ' in')
-        if data['main'].has_key('sea_level'):
-            set_property('Current.SeaLevel'         , str(round(data['main']['sea_level'] / 33.86 ,2)) + ' in')
-        else:
-            set_property('Current.SeaLevel'         , '')
-        if data['main'].has_key('grnd_level'):
-            set_property('Current.GroundLevel'      , str(round(data['main']['grnd_level'] / 33.86 ,2)) + ' in')
-        else:
-            set_property('Current.GroundLevel'      , '')
-        rain = 0
-        snow = 0
-        if data.has_key('rain'):
-            if data['rain'].has_key('1h'):
-                rain = data['rain']['1h']
-            elif data['rain'].has_key('3h'):
-                rain = data['rain']['3h']
-            set_property('Current.Rain'             , str(round(rain *  0.04 ,2)) + ' in')
-        else:
-            set_property('Current.Rain'             , '')
-        if data.has_key('snow'):
-            if data['snow'].has_key('1h'):
-                snow = data['snow']['1h']
-            elif data['snow'].has_key('3h'):
-                snow = data['snow']['3h']
-            set_property('Current.Snow'             , str(round(snow *  0.04 ,2)) + ' in')
-        else:
-            set_property('Current.Snow'             , '')
-        precip = rain + snow
-        set_property('Current.Precipitation'        , str(round(precip *  0.04 ,2)) + ' in')
+    if data['main'].has_key('temp_min'):
+        set_property('Current.LowTemperature'   , TEMP(data['main']['temp_min']) + TEMPUNIT)
     else:
-        set_property('Current.Pressure'             , str(data['main']['pressure']) + ' mb')
+        set_property('Current.LowTemperature'   , '')
+    if data['main'].has_key('temp_max'):
+        set_property('Current.HighTemperature'  , TEMP(data['main']['temp_max']) + TEMPUNIT)
+    else:
+        set_property('Current.HighTemperature'  , '')
+    if 'F' in TEMPUNIT:
+        set_property('Current.Pressure'         , str(round(data['main']['pressure'] / 33.86 ,2)) + ' in')
         if data['main'].has_key('sea_level'):
-            set_property('Current.SeaLevel'         , str(data['main']['sea_level']) + ' mb')
+            set_property('Current.SeaLevel'     , str(round(data['main']['sea_level'] / 33.86 ,2)) + ' in')
         else:
-            set_property('Current.SeaLevelSnow'     , '')
+            set_property('Current.SeaLevel'     , '')
         if data['main'].has_key('grnd_level'):
-            set_property('Current.GroundLevel'      , str(data['main']['grnd_level']) + ' mb')
+            set_property('Current.GroundLevel'  , str(round(data['main']['grnd_level'] / 33.86 ,2)) + ' in')
         else:
-            set_property('Current.GroundLevel'      , '')
+            set_property('Current.GroundLevel'  , '')
         rain = 0
         snow = 0
         if data.has_key('rain'):
@@ -354,19 +330,49 @@ def current_props(data,loc):
                 rain = data['rain']['1h']
             elif data['rain'].has_key('3h'):
                 rain = data['rain']['3h']
-            set_property('Current.Rain'             , str(int(round(rain))) + ' mm')
+            set_property('Current.Rain'         , str(round(rain *  0.04 ,2)) + ' in')
         else:
-            set_property('Current.Rain'             , '')
+            set_property('Current.Rain'         , '')
         if data.has_key('snow'):
             if data['snow'].has_key('1h'):
                 snow = data['snow']['1h']
             elif data['snow'].has_key('3h'):
                 snow = data['snow']['3h']
-            set_property('Current.Snow'             , str(int(round(snow))) + ' mm')
+            set_property('Current.Snow'         , str(round(snow *  0.04 ,2)) + ' in')
         else:
-            set_property('Current.Snow'             , '')
+            set_property('Current.Snow'         , '')
         precip = rain + snow
-        set_property('Current.Precipitation'        , str(int(round(precip))) + ' mm')
+        set_property('Current.Precipitation'    , str(round(precip *  0.04 ,2)) + ' in')
+    else:
+        set_property('Current.Pressure'         , str(data['main']['pressure']) + ' mb')
+        if data['main'].has_key('sea_level'):
+            set_property('Current.SeaLevel'     , str(data['main']['sea_level']) + ' mb')
+        else:
+            set_property('Current.SeaLevelSnow' , '')
+        if data['main'].has_key('grnd_level'):
+            set_property('Current.GroundLevel'  , str(data['main']['grnd_level']) + ' mb')
+        else:
+            set_property('Current.GroundLevel'  , '')
+        rain = 0
+        snow = 0
+        if data.has_key('rain'):
+            if data['rain'].has_key('1h'):
+                rain = data['rain']['1h']
+            elif data['rain'].has_key('3h'):
+                rain = data['rain']['3h']
+            set_property('Current.Rain'         , str(int(round(rain))) + ' mm')
+        else:
+            set_property('Current.Rain'         , '')
+        if data.has_key('snow'):
+            if data['snow'].has_key('1h'):
+                snow = data['snow']['1h']
+            elif data['snow'].has_key('3h'):
+                snow = data['snow']['3h']
+            set_property('Current.Snow'         , str(int(round(snow))) + ' mm')
+        else:
+            set_property('Current.Snow'         , '')
+        precip = rain + snow
+        set_property('Current.Precipitation'    , str(int(round(precip))) + ' mm')
     if data['wind'].has_key('gust'):
         set_property('Current.WindGust'         , SPEED(data['wind']['gust']) + SPEEDUNIT)
     else:
