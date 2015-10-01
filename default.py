@@ -245,37 +245,42 @@ def station_props(data,loc):
     set_property('Current.Location'             , loc)
     if data.has_key('last') and data['last'].has_key('main') and data['last']['main'].has_key('temp'):
         set_property('Current.Temperature'      , str(int(round(data['last']['main']['temp'])) - 273)) # api values are in K
-    else:
-        set_property('Current.Temperature'      , '')
     if data.has_key('last') and data['last'].has_key('main') and data['last']['main'].has_key('humidity'):
         set_property('Current.Humidity'         , str(data['last']['main']['humidity']))
-    else:
-        set_property('Current.Humidity'         , '')
     if data.has_key('last') and data['last'].has_key('wind') and data['last']['wind'].has_key('speed'):
         set_property('Current.Wind'             , str(int(round(data['last']['wind']['speed'] * 3.6))))
-    else:
-        set_property('Current.Wind'             , '')
     if data.has_key('last') and data['last'].has_key('wind') and data['last']['wind'].has_key('deg'):
         set_property('Current.WindDirection'    , xbmc.getLocalizedString(WIND_DIR(int(round(data['last']['wind']['deg'])))))
-    else:
-        set_property('Current.WindDirection', '')
     try:
         set_property('Current.FeelsLike'        , FEELS_LIKE(data['last']['main']['temp'] -273, data['last']['wind']['speed'], False)) # api values are in K
     except:
-        set_property('Current.FeelsLike'        , '')
+        pass
     if data.has_key('last') and data['last'].has_key('calc') and data['last']['calc'].has_key('dewpoint'):
-        set_property('Current.DewPoint'         , str(int(round(data['last']['calc']['dewpoint'])) - 273)) # api values are in K
+        if data['last']['main']['temp'] - data['last']['calc']['dewpoint'] > 100:
+            set_property('Current.DewPoint'     , str(int(round(data['last']['calc']['dewpoint'])))) # api values are in C
+        else:
+            set_property('Current.DewPoint'     , str(int(round(data['last']['calc']['dewpoint'])) - 273)) # api values are in K
     else:
         try:
             set_property('Current.DewPoint'     , DEW_POINT(data['last']['main']['temp'] -273, data['last']['main']['humidity'], False)) # api values are in K
         except:
-            set_property('Current.DewPoint'     , '')
-    set_property('Current.UVIndex'              , '') # no idea how the api returns it
+            pass
+    #set_property('Current.UVIndex'              , '') # no idea how the api returns it, use data from current_props()
 # extended properties
     if data.has_key('last') and data['last'].has_key('clouds') and data['last']['clouds'][0] != '':
         set_property('Current.Cloudiness'       , data['last']['clouds'][0]['condition'])
-    else:
-        set_property('Current.Cloudiness'       , '')
+    if data.has_key('last') and data['last'].has_key('wind') and data['last']['wind'].has_key('gust'):
+        set_property('Current.WindGust'         , SPEED(data['last']['wind']['gust']) + SPEEDUNIT)
+    if data.has_key('last') and data['last'].has_key('rain') and data['last']['rain'].has_key('1h'):
+        if 'F' in TEMPUNIT:
+            set_property('Current.Precipitation', str(round(data['last']['rain']['1h'] *  0.04 ,2)) + ' in')
+        else:
+            set_property('Current.Precipitation', str(int(round(data['last']['rain']['1h']))) + ' mm')
+    if data.has_key('last') and data['last'].has_key('main') and data['last']['main'].has_key('pressure'):
+        if 'F' in TEMPUNIT:
+            set_property('Current.Pressure'     , str(round(data['last']['main']['pressure'] / 33.86 ,2)) + ' in')
+        else:
+            set_property('Current.Pressure'     , str(data['last']['main']['pressure']) + ' mb')
 
 def current_props(data,loc):
 # standard properties
